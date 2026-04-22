@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: telco-churn
+Version: 0.1.0
+Requires-Python: >=3.10
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: pydantic
+Requires-Dist: openpyxl
+Provides-Extra: ml
+Requires-Dist: torch; extra == "ml"
+Requires-Dist: scikit-learn; extra == "ml"
+Provides-Extra: tracking
+Requires-Dist: mlflow; extra == "tracking"
+Provides-Extra: dev
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: pytest; extra == "dev"

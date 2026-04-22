@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+pandas
+numpy
+pydantic
+openpyxl
+
+[dev]
+ruff
+pytest
+
+[ml]
+torch
+scikit-learn
+
+[tracking]
+mlflow
