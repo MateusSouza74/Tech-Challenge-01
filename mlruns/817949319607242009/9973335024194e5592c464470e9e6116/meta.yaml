@@ -1,0 +1,14 @@
+artifact_uri: file:c:/Users/mateus.nascimento/telco-churn/notebooks/../mlruns/817949319607242009/9973335024194e5592c464470e9e6116/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '817949319607242009'
+lifecycle_stage: active
+run_id: 9973335024194e5592c464470e9e6116
+run_name: peaceful-sloth-997
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1776875238487
+status: 1
+tags: []
+user_id: mateus.nascimento
