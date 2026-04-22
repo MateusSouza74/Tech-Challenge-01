@@ -1,0 +1,23 @@
+# Virtual environment
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ML artifacts
+models/*.pkl
+models/*.pt
+
+# Environment variables
+.env
+
+# OS
+.DS_Store
