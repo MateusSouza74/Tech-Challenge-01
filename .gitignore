@@ -12,10 +12,6 @@ build/
 # Jupyter
 .ipynb_checkpoints/
 
-# ML artifacts
-models/*.pkl
-models/*.pt
-
 # Environment variables
 .env
 
@@ -24,3 +20,7 @@ models/*.pt
 
 # MLflow
 mlruns/
+
+# MLflow database (gerado localmente)
+mlflow.db
+notebooks/mlflow.db

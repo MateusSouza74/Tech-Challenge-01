@@ -13,23 +13,27 @@ dependencies = [
     "numpy",
     "pydantic",
     "openpyxl",
+    "torch",
+    "scikit-learn",
+    "mlflow",
+    "matplotlib",
+    "seaborn",
+    "pandera",
 ]
 
 [project.optional-dependencies]
-ml = [
-    "torch",
-    "scikit-learn",
-]
-tracking = [
-    "mlflow",
-]
 dev = [
     "ruff",
     "pytest",
+    "httpx",
 ]
 
 [tool.ruff]
 line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
