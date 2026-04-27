@@ -21,3 +21,6 @@ models/*.pt
 
 # OS
 .DS_Store
+
+# MLflow
+mlruns/
