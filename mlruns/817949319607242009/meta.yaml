@@ -1,8 +1,0 @@
-artifact_location: file:c:/Users/mateus.nascimento/telco-churn/notebooks/../mlruns/817949319607242009
-creation_time: 1776874977535
-experiment_id: '817949319607242009'
-last_update_time: 1776874977535
-lifecycle_stage: active
-name: telco-churn-baselines
-trace_location: null
-workspace: default
