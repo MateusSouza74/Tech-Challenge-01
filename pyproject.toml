@@ -19,6 +19,7 @@ dependencies = [
     "matplotlib",
     "seaborn",
     "pandera",
+    "joblib",
 ]
 
 [project.optional-dependencies]

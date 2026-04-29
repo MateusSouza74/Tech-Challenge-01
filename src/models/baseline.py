@@ -1,22 +1,22 @@
-#Modelos baseline para comparação com a MLP.
+# Modelos baseline para comparação com a MLP.
 import logging
 
 from sklearn.dummy import DummyClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import StratifiedKFold, cross_validate
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import make_scorer, f1_score, precision_score, recall_score
+from sklearn.model_selection import StratifiedKFold, cross_validate
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.tree import DecisionTreeClassifier
+
+from src.config import SEED
 
 logger = logging.getLogger(__name__)
 
-SEED = 42
-
 
 def get_baselines(seed: int = SEED) -> list[tuple[str, object]]:
-#Retorna lista de (nome, modelo) dos baselines configurados.
+    # Retorna lista de (nome, modelo) dos baselines configurados.
     return [
         (
             "Dummy",
@@ -44,7 +44,7 @@ def get_baselines(seed: int = SEED) -> list[tuple[str, object]]:
 
 
 def get_scoring() -> dict:
-#Retorna dict de métricas para cross_validate.
+    # Retorna dict de métricas para cross_validate.
     return {
         "roc_auc": "roc_auc",
         "average_precision": "average_precision",
@@ -60,11 +60,8 @@ def evaluate_baselines(
     seed: int = SEED,
     n_splits: int = 5,
 ) -> list[dict]:
-
-    """Avalia todos os baselines com validação cruzada estratificada.
-    Returns:
-        Lista de dicts com nome e métricas de cada modelo.
-    """
+    # Avalia todos os baselines com validação cruzada estratificada.
+    # Retorna lista de dicts com nome e métricas de cada modelo.
     cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
     scoring = get_scoring()
     results = []

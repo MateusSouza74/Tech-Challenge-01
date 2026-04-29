@@ -1,17 +1,17 @@
-#Arquiteturas MLP para previsão de churn.
+# Arquiteturas MLP para previsão de churn.
 import logging
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 
-logger = logging.getLogger(__name__)
+from src.config import MODELS_DIR
 
-MODELS_DIR = Path(__file__).resolve().parent.parent.parent / "models"
+logger = logging.getLogger(__name__)
 
 
 class ChurnMLP(nn.Module):
-#MLP-v1: 64 → 32 → 1 (com Sigmoid na saída)
+    # MLP-v1: 64 → 32 → 1 (com Sigmoid na saída)
 
     def __init__(self, input_dim: int = 50):
         super().__init__()
@@ -31,7 +31,7 @@ class ChurnMLP(nn.Module):
 
 
 class ChurnMLPv2(nn.Module):
-# MLP-v2: 128 → 64 → 32 → 1 (logit puro, usa BCEWithLogitsLoss).
+    # MLP-v2: 128 → 64 → 32 → 1 (logit puro, usa BCEWithLogitsLoss).
 
     def __init__(self, input_dim: int = 50):
         super().__init__()
@@ -56,13 +56,11 @@ def load_model(
     input_dim: int = 50,
     version: str = "v2",
 ) -> nn.Module:
-    """Carrega um modelo treinado do disco.
-
-    Args:
-        path: Caminho do checkpoint. Default: models/mlp_best.pt
-        input_dim: Número de features de entrada.
-        version: "v1" para ChurnMLP ou "v2" para ChurnMLPv2.
-    """
+    # Carrega um modelo treinado do disco.
+    # Args:
+    #   path: Caminho do checkpoint. Default: models/mlp_best.pt
+    #   input_dim: Número de features de entrada.
+    #   version: "v1" para ChurnMLP ou "v2" para ChurnMLPv2.
     path = path or MODELS_DIR / "mlp_best.pt"
     model_cls = ChurnMLP if version == "v1" else ChurnMLPv2
     model = model_cls(input_dim=input_dim)
