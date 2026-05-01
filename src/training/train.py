@@ -11,11 +11,15 @@ from sklearn.metrics import (
     recall_score,
     roc_auc_score,
 )
+from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.config import MODELS_DIR, SEED, set_global_seed
+from src.data.loader import load_dataset
+from src.data.preprocessing import build_full_pipeline, prepare_features, save_pipeline
 from src.models.models import ChurnMLPv2
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -153,3 +157,43 @@ def evaluate_model(
         "precision": float(precision_score(y, preds_binary, zero_division=0)),
         "recall": float(recall_score(y, preds_binary)),
     }
+
+
+if __name__ == "__main__":
+    logger.info("Iniciando pipeline de treinamento end-to-end...")
+
+    # 1. Carregar dataset
+    df = load_dataset()
+
+    # 2. Separar features e target
+    X_df, y_series = prepare_features(df)
+
+    # 3. Split treino/teste
+    X_train_df, X_test_df, y_train, y_test = train_test_split(
+        X_df, y_series, test_size=0.2, random_state=SEED, stratify=y_series
+    )
+
+    # 4. Construir e treinar pipeline de pré-processamento
+    logger.info("Treinando pipeline de pré-processamento...")
+    pipeline = build_full_pipeline()
+    X_train_t = pipeline.fit_transform(X_train_df, y_train)
+    X_test_t = pipeline.transform(X_test_df)
+
+    # 5. Salvar pipeline
+    MODELS_DIR.mkdir(exist_ok=True, parents=True)
+    save_pipeline(pipeline, MODELS_DIR / "pipeline.joblib")
+
+    # 6. Treinar modelo PyTorch
+    logger.info("Treinando modelo MLP...")
+    model, metrics = train_mlp(
+        X_train=X_train_t,
+        y_train=y_train.values,
+        X_val=X_test_t,
+        y_val=y_test.values,
+        model_cls=ChurnMLPv2,
+        epochs=150,
+        patience=15,
+        save_path=str(MODELS_DIR / "mlp_best.pt")
+    )
+
+    logger.info("Treinamento finalizado com sucesso!")
