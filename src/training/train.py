@@ -1,5 +1,6 @@
 # Loop de treinamento MLP com early stopping na validação.
 import logging
+import mlflow
 
 import numpy as np
 import torch
@@ -162,38 +163,71 @@ def evaluate_model(
 if __name__ == "__main__":
     logger.info("Iniciando pipeline de treinamento end-to-end...")
 
-    # 1. Carregar dataset
-    df = load_dataset()
+    mlflow.set_experiment("Telco_Churn_MLP")
 
-    # 2. Separar features e target
-    X_df, y_series = prepare_features(df)
+    with mlflow.start_run():
+        # 1. Carregar dataset
+        df = load_dataset()
 
-    # 3. Split treino/teste
-    X_train_df, X_test_df, y_train, y_test = train_test_split(
-        X_df, y_series, test_size=0.2, random_state=SEED, stratify=y_series
-    )
+        # 2. Separar features e target
+        X_df, y_series = prepare_features(df)
 
-    # 4. Construir e treinar pipeline de pré-processamento
-    logger.info("Treinando pipeline de pré-processamento...")
-    pipeline = build_full_pipeline()
-    X_train_t = pipeline.fit_transform(X_train_df, y_train)
-    X_test_t = pipeline.transform(X_test_df)
+        # 3. Split treino/teste
+        X_train_df, X_test_df, y_train, y_test = train_test_split(
+            X_df, y_series, test_size=0.2, random_state=SEED, stratify=y_series
+        )
 
-    # 5. Salvar pipeline
-    MODELS_DIR.mkdir(exist_ok=True, parents=True)
-    save_pipeline(pipeline, MODELS_DIR / "pipeline.joblib")
+        # 4. Construir e treinar pipeline de pré-processamento
+        logger.info("Treinando pipeline de pré-processamento...")
+        pipeline = build_full_pipeline()
+        X_train_t = pipeline.fit_transform(X_train_df, y_train)
+        X_test_t = pipeline.transform(X_test_df)
 
-    # 6. Treinar modelo PyTorch
-    logger.info("Treinando modelo MLP...")
-    model, metrics = train_mlp(
-        X_train=X_train_t,
-        y_train=y_train.values,
-        X_val=X_test_t,
-        y_val=y_test.values,
-        model_cls=ChurnMLPv2,
-        epochs=150,
-        patience=15,
-        save_path=str(MODELS_DIR / "mlp_best.pt")
-    )
+        # 5. Salvar pipeline
+        MODELS_DIR.mkdir(exist_ok=True, parents=True)
+        save_pipeline(pipeline, MODELS_DIR / "pipeline.joblib")
 
-    logger.info("Treinamento finalizado com sucesso!")
+        # Configurações do treinamento
+        train_params = {
+            "model_cls": ChurnMLPv2,
+            "epochs": 150,
+            "patience": 15,
+            "lr": 0.001,
+            "batch_size": 32,
+            "seed": SEED,
+            "save_path": str(MODELS_DIR / "mlp_best.pt")
+        }
+
+        # MLflow Tracking: Parâmetros
+        mlflow.log_params({
+            "model_type": train_params["model_cls"].__name__,
+            "epochs": train_params["epochs"],
+            "patience": train_params["patience"],
+            "lr": train_params["lr"],
+            "batch_size": train_params["batch_size"],
+            "seed": train_params["seed"],
+            "input_dim": X_train_t.shape[1]
+        })
+
+        # 6. Treinar modelo PyTorch
+        logger.info("Treinando modelo MLP...")
+        model, metrics = train_mlp(
+            X_train=X_train_t,
+            y_train=y_train.values,
+            X_val=X_test_t,
+            y_val=y_test.values,
+            model_cls=train_params["model_cls"],
+            epochs=train_params["epochs"],
+            patience=train_params["patience"],
+            lr=train_params["lr"],
+            batch_size=train_params["batch_size"],
+            seed=train_params["seed"],
+            save_path=train_params["save_path"]
+        )
+
+        # MLflow Tracking: Métricas e Artefatos
+        mlflow.log_metrics(metrics)
+        mlflow.log_artifact(str(MODELS_DIR / "pipeline.joblib"))
+        mlflow.log_artifact(train_params["save_path"])
+
+        logger.info("Treinamento finalizado com sucesso! Artefatos e métricas logados no MLflow.")

@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from src.config import DROP_COLS, CATEGORICAL_FEATURES, NUMERIC_FEATURES, TARGET_COL
+from src.config import DROP_COLS, NUMERIC_FEATURES, TARGET_COL
 from src.data.preprocessing import (
     ColumnDropper,
     TargetExtractor,

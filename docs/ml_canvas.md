@@ -1,6 +1,6 @@
 # ML Canvas — Churn Prediction (Telco)
 
-Documento vivo. Decisões de *feature selection* e pré-processamento foram confirmadas após a EDA (vide notebook `01_eda.ipynb`) e estão implementadas de forma a alimentar as avaliações no `02_baselines.ipynb` e `03_mlp_pytorch.ipynb`. Decisões de modelagem fina (threshold ótimo, early stopping) já foram calibradas no pipeline (MLP-v2).
+Decisões de *feature selection* e pré-processamento foram confirmadas após a EDA (vide notebook `01_eda.ipynb`) e estão implementadas de forma a alimentar as avaliações no `02_baselines.ipynb` e `03_mlp_pytorch.ipynb`. Decisões de modelagem fina (threshold ótimo, early stopping) já foram calibradas no pipeline (MLP-v2).
 
 | Item | Valor de referência |
 | :--- | :--- |
@@ -14,7 +14,7 @@ Documento vivo. Decisões de *feature selection* e pré-processamento foram conf
 | **Seed de reprodutibilidade** | SEED = 42 |
 
 ## 1. Proposta de Valor
-A operadora de telecomunicações enfrenta churn em ritmo elevado (cerca de 26,5%) e perde receita recorrente. O modelo entrega, para cada cliente ativo, uma probabilidade de cancelamento no próximo período, permitindo ao time de retenção agir de forma proativa — antes do cancelamento acontecer — e priorizar esforço onde o custo esperado de inação é maior.
+A operadora de telecomunicações (fictícia, baseada na Califórnia/IBM) enfrenta churn em ritmo elevado (cerca de 26,5%) e perde receita recorrente. O modelo entrega, para cada cliente ativo, uma probabilidade de cancelamento no próximo período, permitindo ao time de retenção agir de forma proativa — antes do cancelamento acontecer — e priorizar esforço onde o custo esperado de inação é maior.
 
 **Sucesso** = redução do custo total de churn (cliente perdido + ação desnecessária), não simplesmente acertar a classificação. A mitigação do custo demonstra uma economia esperada de R$ 46.400,00 no hold-out vis-à-vis atuar sem modelo.
 
@@ -62,7 +62,7 @@ A métrica principal baseia-se na avaliação desbalanceada via precision-recall
 | Métrica | Por quê | Alvo/Estado Operacional |
 | :--- | :--- | :--- |
 | **PR-AUC** | Essencial quando o custo de FN exige avaliação sob desbalanceamento; foca na classe alvo. | 0,62 ~ 0,65 |
-| **ROC-AUC** | Analítica discriminativa geral dos baselines x rede linear. | ≥ 0,84 |
+| **ROC-AUC** | Analítica discriminativa geral dos baselines x rede neural. | ≥ 0,84 |
 | **Recall** | Prioridade técnica derivada da matriz de custos (capturar churn é necessário). | ≥ 82% |
 | **F1-Score** | Média harmônica de balanço Precision-Recall | Curva de Report |
 
@@ -75,11 +75,11 @@ A métrica principal baseia-se na avaliação desbalanceada via precision-recall
 | :--- | :--- |
 | **Latência por predição (API, P95)** | < 200 ms |
 | **Disponibilidade do endpoint** | ≥ 99,9% |
-| **POC Offline em Produção** | PyTorch / Pickled Scalers rest-API |
+| **Artefatos de Inferência** | PyTorch / Pickled Scalers rest-API |
 | **Avaliação Operacional** | Deploy on-demand (FastAPI em Docker) real-time; A retenção reage dinamicamente aos alertas da API. |
 
 ## 8. Avaliação Offline Estrutural
-* **Split Triplo (Neural):** 64% Treino / 16% Validação / 20% Teste. Estratificados preservando taxa natural de ~26,5% do `Churn`. 
+* **Split de Validação (Neural):** 80% Treino / 20% Validação e Teste. Estratificados preservando taxa natural de ~26,5% do `Churn`. 
 * **Baselines Comparativos:** Validação cruzada (Stratified 5-Fold) aplicados em Dummy, Logistic Regression, Decision Tree e Random Forest.  
 
 ## 9. Construção dos Modelos
@@ -90,7 +90,7 @@ A métrica principal baseia-se na avaliação desbalanceada via precision-recall
 | **Logistic Regression / Árvores** | Intermediários interpretáveis | Scikit-Learn `RandomForest`/`LogReg` / Max Iter=1000 |
 | **MLP PyTorch (MLP-v2)** | Redutor extremo do Churn | **128 → 64 → 32 → 1**; BCELogitsLoss com *pos_weight*; Batch_Size=32; Adam; *Dropout(0.2)* |
 
-**Controle Profissional:** Retenção de curva máxima usando `Early Stopping` estrito não na *loss de Treino* (que causava forte overfit), mas atuando na **Loss de Validação**, parando com `patience=20`. Rastreamento de métricas e hashes via backend unificado do **MLflow SQLite** registrando o portfólio completo de hiperparâmetros e pesos (`.pt`).
+**Controle Profissional:** Retenção de curva máxima usando `Early Stopping` estrito não na *loss de Treino* (que causava forte overfit), mas atuando na **Loss de Validação**, parando com `patience=15`. Rastreamento de métricas e hashes via backend unificado do **MLflow SQLite** registrando o portfólio completo de hiperparâmetros e pesos (`.pt`).
 
 ## 10. Inferências & Governança (Monitoramento e Retreino)
 * A inferência do PyTorch e do Dicionário de Inputs aguardam consumo online.
