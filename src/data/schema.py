@@ -1,5 +1,5 @@
 # Schema de validação do dataset Telco Churn com pandera.
-import pandera as pa
+import pandera.pandas as pa
 
 # Schema para validação do DataFrame de entrada.
 # Garante tipos, ranges e valores permitidos antes do pré-processamento.

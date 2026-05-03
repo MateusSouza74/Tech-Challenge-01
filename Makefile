@@ -1,4 +1,4 @@
-.PHONY: install lint test run
+.PHONY: install lint test run train mlflow
 
 install:
 	pip install -e ".[dev]"
@@ -14,3 +14,6 @@ test:
 
 run:
 	uvicorn src.api.api:app --reload
+
+mlflow:
+	mlflow ui

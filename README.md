@@ -19,7 +19,7 @@ O projeto abrange desde a exploração inicial de dados (EDA) até o deploy de u
 
 Uma operadora de telecomunicações está perdendo clientes em ritmo acelerado. A diretoria precisa de um **modelo preditivo de churn** que classifique os clientes atuais com risco iminente de cancelamento.
 
-O objetivo do grupo foi atuar em todo o ciclo de vida dos dados: construir o projeto absolutamente do zero, partindo da modelagem analítica e terminando com o modelo servido via API, aplicando as melhores práticas de Engenharia de Machine Learning.
+O objetivo do projeto é atuar em todo o ciclo de vida dos dados: construir a solução do zero, partindo da modelagem analítica e terminando com o modelo servido via API, aplicando as melhores práticas de Engenharia de Machine Learning.
 
 ## 📊 O Dataset (Telco Customer Churn: IBM)
 
@@ -56,7 +56,7 @@ Pré-requisitos: Python 3.10 ou superior. Recomendado uso de ambiente virtual (`
 
 1. **Clonar o repositório:**
    ```bash
-   git clone <url-do-repositorio>
+   git clone https://github.com/MateusSouza74/Tech-Challenge-01.git
    cd Tech-Challenge-01
    ```
 
@@ -73,40 +73,47 @@ Pré-requisitos: Python 3.10 ou superior. Recomendado uso de ambiente virtual (`
 
 3. **Instalar as dependências:**
    ```bash
-   # Instala dependências do projeto e de desenvolvimento (pytest, ruff)
+   # Opção com Make:
+   make install
+   
+   # Opção com Python/Pip:
    pip install -e ".[dev]"
    ```
 
 ## 💻 Execução
 
-Os comandos a seguir garantem que a pipeline, esquemas de dados e modelo estão funcionando.
+É possível executar os comandos do projeto de duas formas: utilizando o utilitário **`make`** (padrão em ambientes Linux/Mac) ou executando os **comandos nativos do Python** (recomendado para ambientes Windows, evitando a instalação de dependências extras).
+
+> **Antes de executar qualquer comando abaixo**, é necessário certificar-se de estar dentro do diretório `Tech-Challenge-01` e com o ambiente virtual ativado:
+> ```bash
+> cd Tech-Challenge-01
+> .\.venv\Scripts\activate   # No Windows
+> ```
 
 ### 1. Rodar os testes
-Garante que a pipeline, esquemas de dados e modelo estão funcionando.
-```bash
-make test
-```
+Garantir o funcionamento da pipeline, esquemas de dados e modelo.
+- **Opção com Make:** `make test`
+- **Opção com Python:** `pytest tests/ -v`
 
 ### 2. Rodar o linting
-Garante a qualidade do código com `ruff`.
-```bash
-make lint
-```
+Garantir a qualidade do código com `ruff`.
+- **Opção com Make:** `make lint`
+- **Opção com Python:** `ruff check src/ tests/`
 
 ### 3. Rodar a API FastAPI localmente
-Inicia o servidor de inferência.
-```bash
-make run
-```
-Acesse a documentação da API em: `http://127.0.0.1:8000/docs`.
+Iniciar o servidor de inferência.
+- **Opção com Make:** `make run`
+- **Opção com Python:** `uvicorn src.api.api:app --reload`
+> **Acessar a documentação da API em:** `http://127.0.0.1:8000/docs`
 
 ### 4. Treinar os modelos
-Executa o treinamento e registra os resultados no MLflow local.
-```bash
-make train
-```
+Executar o treinamento e registrar os resultados no MLflow local.
+- **Opção com Make:** `make train`
+- **Opção com Python:** `python -m src.training.train`
 
-Para visualizar a interface do MLflow, execute `mlflow ui` no terminal e acesse `http://127.0.0.1:5000`.
+Para visualizar a interface do MLflow e acessar `http://127.0.0.1:5000`:
+- **Opção com Make:** `make mlflow`
+- **Opção com Python:** `mlflow ui`
 
 ## 📚 Documentação Adicional
 
