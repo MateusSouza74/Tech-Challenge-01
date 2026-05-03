@@ -3,7 +3,6 @@
 ## Visão Geral do Modelo
 - **Tarefa**: Classificação binária para prever se um cliente irá cancelar o serviço (churn).
 - **Arquitetura Base**: Rede Neural Multilayer Perceptron (MLP) construída em PyTorch.
-- **Desenvolvedores**: Grupo Tech Challenge 01.
 - **Entrada**: Dados tabulares com features demográficas (ex: gênero), informações sobre o serviço contratado (ex: tipo de internet) e informações de faturamento (ex: MonthlyCharges, TotalCharges).
 - **Saída**: Uma probabilidade contínua (0 a 1) indicando a chance de churn, além da classe predita.
 
@@ -27,7 +26,7 @@ O treinamento do MLP utilizou:
 - **Função de Perda**: Binary Cross Entropy with Logits Loss (BCEWithLogitsLoss).
 - **Métrica Principal**: F1-Score e ROC-AUC.
 - **Estratégia de Validação**: Divisão de Treino/Teste estratificada (80/20) para lidar com possível desbalanceamento das classes e `Early Stopping` configurado para prevenir overfitting.
-- Todos os hiperparâmetros (como `learning_rate`, `batch_size`, épocas) foram documentados através do MLflow.
+- Todos os hiperparâmetros (como `learning_rate`, `batch_size`, épocas) e a **versão do dataset** (hash MD5) foram documentados através do MLflow, garantindo rastreabilidade completa dos experimentos.
 
 ## Performance
 A Rede Neural alcançou uma performance consistente contra os baselines lineares e de árvore, demonstrando robustez em capturar interações não-lineares. O trade-off de custo (Falsos Positivos vs. Falsos Negativos) foi equilibrado dependendo do threshold de decisão. Um falso negativo tem alto impacto no negócio pois significa a perda da receita do cliente.
@@ -38,5 +37,5 @@ A Rede Neural alcançou uma performance consistente contra os baselines lineares
 - **Limitações de Temporalidade**: O modelo reflete o comportamento passado do cliente. Se a operadora introduzir um novo serviço ou reajuste de preço agressivo de uma só vez, o modelo não saberá lidar de imediato.
 
 ## Cenários de Falha e Out of Scope
-- **Valores Anômalos (Outliers Absurdos)**: Faturamentos mensais extremamente fora da curva podem causar inferências distorcidas. Por este motivo, utiliza-se `pandera` no momento da predição para barrar faturamentos negativos.
+- **Valores Anômalos (Outliers Absurdos)**: Faturamentos mensais extremamente fora da curva podem causar inferências distorcidas. A validação de entrada na API é realizada pelo schema `Pydantic`, que garante tipos e estrutura do payload. O `pandera` é utilizado na validação offline do dataset durante o treinamento e nos testes automatizados.
 - **Out of Scope**: Este modelo não realiza recomendação sobre *qual* oferta deve ser feita ao cliente (apenas prevê a probabilidade do churn). O "Next Best Action" fica a cargo de regras de negócio adicionais após a inferência.

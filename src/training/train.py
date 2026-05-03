@@ -1,7 +1,7 @@
 # Loop de treinamento MLP com early stopping na validação.
 import logging
-import mlflow
 
+import mlflow
 import numpy as np
 import torch
 import torch.nn as nn
@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.config import MODELS_DIR, SEED, set_global_seed
-from src.data.loader import load_dataset
+from src.data.loader import compute_dataset_hash, load_dataset
 from src.data.preprocessing import build_full_pipeline, prepare_features, save_pipeline
 from src.models.models import ChurnMLPv2
 
@@ -206,7 +206,8 @@ if __name__ == "__main__":
             "lr": train_params["lr"],
             "batch_size": train_params["batch_size"],
             "seed": train_params["seed"],
-            "input_dim": X_train_t.shape[1]
+            "input_dim": X_train_t.shape[1],
+            "dataset_hash": compute_dataset_hash(),
         })
 
         # 6. Treinar modelo PyTorch

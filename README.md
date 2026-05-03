@@ -90,30 +90,30 @@ Pré-requisitos: Python 3.10 ou superior. Recomendado uso de ambiente virtual (`
 > .\.venv\Scripts\activate   # No Windows
 > ```
 
-### 1. Rodar os testes
-Garantir o funcionamento da pipeline, esquemas de dados e modelo.
-- **Opção com Make:** `make test`
-- **Opção com Python:** `pytest tests/ -v`
-
-### 2. Rodar o linting
-Garantir a qualidade do código com `ruff`.
-- **Opção com Make:** `make lint`
-- **Opção com Python:** `ruff check src/ tests/`
-
-### 3. Rodar a API FastAPI localmente
-Iniciar o servidor de inferência.
-- **Opção com Make:** `make run`
-- **Opção com Python:** `uvicorn src.api.api:app --reload`
-> **Acessar a documentação da API em:** `http://127.0.0.1:8000/docs`
-
-### 4. Treinar os modelos
-Executar o treinamento e registrar os resultados no MLflow local.
+### 1. Treinar os modelos
+Executar o treinamento e registrar os resultados no MLflow local. Este passo gera os artefatos necessários para a API e os testes.
 - **Opção com Make:** `make train`
 - **Opção com Python:** `python -m src.training.train`
 
 Para visualizar a interface do MLflow e acessar `http://127.0.0.1:5000`:
 - **Opção com Make:** `make mlflow`
 - **Opção com Python:** `mlflow ui`
+
+### 2. Rodar os testes
+Garantir o funcionamento da pipeline, esquemas de dados, modelo e API (26 testes cobrindo 4 categorias: smoke, schema, preprocessing e API).
+- **Opção com Make:** `make test`
+- **Opção com Python:** `pytest tests/ -v`
+
+### 3. Rodar o linting
+Garantir a qualidade do código com `ruff`.
+- **Opção com Make:** `make lint`
+- **Opção com Python:** `ruff check src/ tests/`
+
+### 4. Rodar a API FastAPI localmente
+Iniciar o servidor de inferência.
+- **Opção com Make:** `make run`
+- **Opção com Python:** `uvicorn src.api.api:app --reload`
+> **Acessar a documentação da API em:** `http://127.0.0.1:8000/docs`
 
 ## 📚 Documentação Adicional
 

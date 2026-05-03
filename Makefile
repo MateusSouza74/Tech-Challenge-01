@@ -16,4 +16,4 @@ run:
 	uvicorn src.api.api:app --reload
 
 mlflow:
-	mlflow ui
+	mlflow ui --host 0.0.0.0
