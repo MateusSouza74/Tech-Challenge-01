@@ -10,6 +10,7 @@
 ![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
 ![pytest](https://img.shields.io/badge/pytest-%23ffffff.svg?style=for-the-badge&logo=pytest&logoColor=2f9fe3)
 ![Ruff](https://img.shields.io/badge/Ruff-Linting-black?style=for-the-badge)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
 
 Projeto de entrega final da **Fase 01** da Pós-Graduação em Machine Learning Engineering da **FIAP**, focado no desenvolvimento ponta a ponta de um modelo de Machine Learning para prever o churn (cancelamento) de clientes em uma operadora de telecomunicações. 
 
@@ -82,38 +83,80 @@ Pré-requisitos: Python 3.10 ou superior. Recomendado uso de ambiente virtual (`
 
 ## 💻 Execução
 
-É possível executar os comandos do projeto de duas formas: utilizando o utilitário **`make`** (padrão em ambientes Linux/Mac) ou executando os **comandos nativos do Python** (recomendado para ambientes Windows, evitando a instalação de dependências extras).
+Todos os comandos do projeto podem ser executados via **`make`** ou diretamente com **`python -m`**. O uso de `python -m` garante compatibilidade total com **Windows**, onde os executáveis do pip nem sempre estão no PATH.
 
-> **Antes de executar qualquer comando abaixo**, é necessário certificar-se de estar dentro do diretório `Tech-Challenge-01` e com o ambiente virtual ativado:
+> **Antes de executar qualquer comando abaixo**, certifique-se de estar dentro do diretório `Tech-Challenge-01` e com o ambiente virtual ativado:
 > ```bash
 > cd Tech-Challenge-01
 > .\.venv\Scripts\activate   # No Windows
+> source .venv/bin/activate   # No Linux/MacOS
 > ```
 
 ### 1. Treinar os modelos
-Executar o treinamento e registrar os resultados no MLflow local. Este passo gera os artefatos necessários para a API e os testes.
+Executa o treinamento da MLP e registra os resultados no MLflow local. Este passo gera os artefatos necessários para a API e os testes. Cada execução é registrada com um **nome descritivo** no formato `ChurnMLPv2_lr{lr}_bs{batch}_pat{patience}_{timestamp}`, facilitando a identificação das runs.
 - **Opção com Make:** `make train`
 - **Opção com Python:** `python -m src.training.train`
 
 Para visualizar a interface do MLflow e acessar `http://127.0.0.1:5000`:
 - **Opção com Make:** `make mlflow`
-- **Opção com Python:** `mlflow ui`
+- **Opção com Python:** `python -m mlflow ui`
 
 ### 2. Rodar os testes
 Garantir o funcionamento da pipeline, esquemas de dados, modelo e API (26 testes cobrindo 4 categorias: smoke, schema, preprocessing e API).
 - **Opção com Make:** `make test`
-- **Opção com Python:** `pytest tests/ -v`
+- **Opção com Python:** `python -m pytest tests/ -v`
 
 ### 3. Rodar o linting
 Garantir a qualidade do código com `ruff`.
 - **Opção com Make:** `make lint`
-- **Opção com Python:** `ruff check src/ tests/`
+- **Opção com Python:** `python -m ruff check src/ tests/`
 
 ### 4. Rodar a API FastAPI localmente
 Iniciar o servidor de inferência.
 - **Opção com Make:** `make run`
-- **Opção com Python:** `uvicorn src.api.api:app --reload`
-> **Acessar a documentação da API em:** `http://127.0.0.1:8000/docs`
+- **Opção com Python:** `python -m uvicorn src.api.api:app --reload`
+
+> **Acessar a documentação interativa (Swagger UI) em:** `http://127.0.0.1:8000/docs`
+
+#### Exemplo de payload para o endpoint `/predict`
+
+Via Swagger UI ou qualquer cliente HTTP, envie um POST para `/predict` com o seguinte JSON:
+
+```json
+{
+  "Count": 1,
+  "Zip Code": 90210,
+  "Latitude": 34,
+  "Longitude": -118,
+  "Tenure Months": 2,
+  "Monthly Charges": 95.00,
+  "Total Charges": 190.00,
+  "Gender": "Male",
+  "Senior Citizen": "No",
+  "Partner": "No",
+  "Dependents": "No",
+  "Phone Service": "Yes",
+  "Multiple Lines": "No",
+  "Internet Service": "Fiber optic",
+  "Online Security": "No",
+  "Online Backup": "No",
+  "Device Protection": "No",
+  "Tech Support": "No",
+  "Streaming TV": "No",
+  "Streaming Movies": "No",
+  "Contract": "Month-to-month",
+  "Paperless Billing": "Yes",
+  "Payment Method": "Electronic check"
+}
+```
+
+Resposta esperada:
+```json
+{
+  "churn_probability": 0.8234,
+  "churn_prediction": true
+}
+```
 
 ## 📚 Documentação Adicional
 
@@ -130,3 +173,11 @@ Documentações detalhadas do projeto na pasta `docs/`:
 | :---------------------------------- | :------- | :---------------------------------------------- |
 | **Mateus de Souza Nascimento**      | RM373134 | Analyst / DevOps / Data Scientist / ML Engineer |
 | **Raphael Dyorgenes Vitor**         | RM371314 | Analyst / DevOps / Data Scientist / ML Engineer |
+
+## 🧠 ML Canvas
+
+![ML Canvas](docs/ml_canvas.png)
+
+## 📄 Licença
+
+Este projeto está licenciado sob a **Licença MIT** — veja o arquivo [LICENSE](LICENSE) para detalhes.

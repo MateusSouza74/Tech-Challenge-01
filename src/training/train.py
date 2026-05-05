@@ -161,11 +161,35 @@ def evaluate_model(
 
 
 if __name__ == "__main__":
+    from datetime import datetime
+
     logger.info("Iniciando pipeline de treinamento end-to-end...")
+
+    # Configurações do treinamento (definidas antes da run para compor o nome)
+    train_params = {
+        "model_cls": ChurnMLPv2,
+        "epochs": 150,
+        "patience": 15,
+        "lr": 0.001,
+        "batch_size": 32,
+        "seed": SEED,
+        "save_path": str(MODELS_DIR / "mlp_best.pt")
+    }
 
     mlflow.set_experiment("Telco_Churn_MLP")
 
-    with mlflow.start_run():
+    # Nome descritivo: modelo + hiperparâmetros + timestamp
+    run_timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    model_name = train_params["model_cls"].__name__
+    run_name = (
+        f"{model_name}"
+        f"_lr{train_params['lr']}"
+        f"_bs{train_params['batch_size']}"
+        f"_pat{train_params['patience']}"
+        f"_{run_timestamp}"
+    )
+
+    with mlflow.start_run(run_name=run_name):
         # 1. Carregar dataset
         df = load_dataset()
 
@@ -187,20 +211,9 @@ if __name__ == "__main__":
         MODELS_DIR.mkdir(exist_ok=True, parents=True)
         save_pipeline(pipeline, MODELS_DIR / "pipeline.joblib")
 
-        # Configurações do treinamento
-        train_params = {
-            "model_cls": ChurnMLPv2,
-            "epochs": 150,
-            "patience": 15,
-            "lr": 0.001,
-            "batch_size": 32,
-            "seed": SEED,
-            "save_path": str(MODELS_DIR / "mlp_best.pt")
-        }
-
         # MLflow Tracking: Parâmetros
         mlflow.log_params({
-            "model_type": train_params["model_cls"].__name__,
+            "model_type": model_name,
             "epochs": train_params["epochs"],
             "patience": train_params["patience"],
             "lr": train_params["lr"],
