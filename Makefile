@@ -7,13 +7,14 @@ train:
 	python -m src.training.train
 
 lint:
-	ruff check src/ tests/
+	python -m ruff check src/ tests/
 
 test:
-	pytest tests/ -v
+	python -m pytest tests/ -v
 
 run:
-	uvicorn src.api.api:app --reload
+	python -m uvicorn src.api.api:app --reload
 
 mlflow:
-	mlflow ui --host 0.0.0.0
+	python -m mlflow ui
+
